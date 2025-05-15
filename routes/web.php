@@ -74,6 +74,7 @@ route::get('canceled/{id}', [AdminController::class, 'canceled']);
 
 Route::get('/sales', [AdminController::class, 'sales']);
 
+Route::get('/my_orders', [HomeController::class, 'my_orders'])->name('my_orders');
 
 
 

@@ -82,7 +82,7 @@
                         <th>Email</th>
                         <th>Phone</th>
                         <th>Address</th>
-                        <th>Coffee Title</th>
+                        <th>Title</th>
                         <th>Quantity</th>
                         <th>Total Price</th>
                         <th>Image</th>

@@ -6,10 +6,10 @@
             <div class="row justify-content-center">
                 <div class="py-5 my-5 col-sm-8">
                     <h2 class="mb-4">About Us</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consectetur, quisquam accusantium nostrum modi, nemo, officia veritatis ipsum facere maxime assumenda voluptatum enim! Labore maiores placeat impedit, vero sed est voluptas!Lorem ipsum dolor sit amet, consectetur adipisicing elit. Expedita alias dicta autem, maiores doloremque quo perferendis, ut obcaecati harum, <br><br>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eum necessitatibus iste,
-                    nulla recusandae porro minus nemo eaque cum repudiandae quidem voluptate magnam voluptatum? <br>Nobis, saepe sapiente omnis qui eligendi pariatur. quis voluptas. Assumenda facere adipisci quaerat. Illum doloremque quae omnis vitae.</p>
-                    <p><b>Lonsectetur adipisicing elit. Blanditiis aspernatur, ratione dolore vero asperiores explicabo.</b></p>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eos ab itaque modi, reprehenderit fugit soluta, molestias optio repellat incidunt iure sed deserunt nemo magnam rem explicabo vitae. Cum, nostrum, quidem.</p>
+                    <p>Welcome to Espresso Brew, where passion meets perfection in every cup. Nestled in the heart of the city, our café blends rich tradition with modern comfort, offering a warm, inviting space for coffee lovers and food enthusiasts alike. 
+                        From the aroma of freshly ground beans to the artistry in every pour, Espresso Brew is more than just a café—it’s a daily ritual, a place to pause, connect, and savor the moment.</p>
+                    <p><b>At Espresso Brew, we take pride in our handcrafted beverages and thoughtfully prepared dishes. Whether you're catching up with friends, working remotely, or simply taking a break, our cozy atmosphere and friendly service make every visit feel special.</b></p>
+                    <p>Our baristas are trained to the highest standards, ensuring consistency, quality, and creativity in every drink. With locally sourced ingredients, seasonal specials, and a passion for sustainability, Espresso Brew stands as a beacon for mindful indulgence and urban charm. Come experience the perfect blend of flavor, comfort, and community—only at Espresso Brew.</p>
                 </div>
             </div>
         </div>

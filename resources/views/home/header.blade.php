@@ -1,4 +1,8 @@
   <!-- Navbar -->
+   @php
+    use App\Models\Cart;
+    $cartCount = auth()->check() ? Cart::where('user_id', auth()->id())->sum('quantity') : 0;
+@endphp
     <nav class="custom-navbar navbar navbar-expand-lg navbar-dark fixed-top" data-spy="affix" data-offset-top="10">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -25,19 +29,25 @@
                 <li class="nav-item">
                     <a class="nav-link" href="#blog">Coffee<span class="sr-only">(current)</span></a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#food">Food<span class="sr-only">(current)</span></a>
+                </li>
 
                 @if (Route::has('login'))
                     @auth
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url('my_orders') }}">My Orders</a>
+                    </li>
 
                   <li class="nav-item">
-    <a class="nav-link position-relative" href="{{ url('my_cart') }}">
-        <i class="fa fa-shopping-cart" style="font-size: 1.5rem;"></i>
-        <span class="top-0 position-absolute start-100 translate-middle badge rounded-pill bg-danger">
-            {{ session('cart') ? count(session('cart', [])) : 0 }}
-            <span class="visually-hidden">items in cart</span>
-        </span>
-    </a>
-</li>
+                        <a class="nav-link position-relative" href="{{ url('my_cart') }}">
+                            <i class="fa fa-shopping-cart" style="font-size: 1.5rem;"></i>
+                            <span class="top-0 position-absolute start-100 translate-middle badge rounded-pill bg-danger">
+                                {{ $cartCount }}
+                                <span class="visually-hidden"></span>
+                            </span>
+                        </a>
+                    </li>
             </li>
 
 

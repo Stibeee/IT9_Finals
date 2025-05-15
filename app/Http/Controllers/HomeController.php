@@ -61,16 +61,16 @@ class HomeController extends Controller
     if (Auth::id()) {
         $user = Auth::user();
         $type = $request->input('type', 'coffee');
-
+        
         $item = $type === 'coffee' ? Coffee::find($id) : Food::find($id);
         $title_field = $type . '_title';
 
         if ($item) {
-
+            
             if (!$item->availability) {
                 return redirect()->back()->with('error', ucfirst($type) . ' "' . $item->$title_field . '" is currently not available.');
             }
-
+            
             $cart = Cart::where($title_field, $item->$title_field)
                        ->where('user_id', $user->id)
                        ->when($type === 'coffee', function($query) {
@@ -107,16 +107,23 @@ class HomeController extends Controller
     }
 }
 
+
   public function my_cart()
-    {
-        $user_id = Auth::user()->id;
-        $coffee = Cart::where('user_id', $user_id)->get();
+{
+    $user_id = Auth::user()->id;
+    
+    // Get all cart items for the user
+    $cart_items = Cart::where('user_id', $user_id)
+        ->select('id', 'coffee_title', 'food_title', 'detail', 'price', 'image', 'quantity', 'user_id')
+        ->get();
 
-        // Calculate the total price by summing the price field
-        $total_price = $coffee->sum('price');
+    // Calculate total price
+    $total_price = $cart_items->sum(function ($item) {
+        return $item->price;
+    });
 
-        return view('home.my_cart', compact('coffee', 'total_price'));
-    }
+    return view('home.my_cart', compact('cart_items', 'total_price'));
+}
 
 public function remove_cart($id)
 {
@@ -132,41 +139,49 @@ public function remove_cart($id)
 
 
 
- public function confirm_order(Request $request)
-{
-    $request->validate([
-        'coffee_id' => 'required|array',
-        'coffee_title' => 'required|array',
-        'quantity' => 'required|array',
-        'price' => 'required|array',
-        'image' => 'required|array',
-        'name' => 'required|string',
-        'email' => 'required|email',
-        'phone' => 'required|numeric',
-        'address' => 'required|string',
-    ]);
+public function confirm_order(Request $request) 
+{ 
+    $request->validate([ 
+        'item_id' => 'required|array', 
+        'title' => 'required|array', 
+        'quantity' => 'required|array', 
+        'price' => 'required|array', 
+        'image' => 'required|array', 
+        'name' => 'required|string', 
+        'email' => 'required|email', 
+        'phone' => 'required|numeric', 
+        'address' => 'required|string', 
+    ]); 
 
-    $user = Auth::user();
+    $user = Auth::user(); 
 
-    foreach ($request->coffee_id as $index => $coffee_id) {
-        $order = new Order;
-        $order->name = $request->name;
-        $order->email = $request->email;
-        $order->phone = $request->phone;
-        $order->address = $request->address;
-        $order->title = $request->coffee_title[$index];
-        $order->quantity = $request->quantity[$index];
-        $order->price = $request->price[$index];
-        $order->image = $request->image[$index];
+    foreach ($request->item_id as $index => $item_id) { 
+        $order = new Order; 
+        $order->user_id = $user->id; 
+        $order->name = $request->name; 
+        $order->email = $request->email; 
+        $order->phone = $request->phone; 
+        $order->address = $request->address; 
+        $order->title = $request->title[$index]; 
+        $order->quantity = $request->quantity[$index]; 
+        $order->price = $request->price[$index]; 
+        $order->image = $request->image[$index]; 
+        $order->delivery_status = 'pending'; 
 
-        $order->save();
+        $order->save(); 
 
-        // Remove the item from the cart
-        Cart::where('id', $coffee_id)->delete();
-    }
+        // Remove the item from the cart 
+        Cart::where('id', $item_id)->delete(); 
+    } 
 
-    return redirect()->back()->with('message', 'Order placed successfully!');
-
+    return redirect()->back()->with('message', 'Order placed successfully!'); 
 }
+
+    public function my_orders()
+    {
+        $user = Auth::user();
+        $orders = Order::where('user_id', $user->id)->get();
+        return view('home.my_orders', compact('orders'));
+    }
 
 }
