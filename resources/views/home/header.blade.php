@@ -26,18 +26,19 @@
                     <a class="nav-link" href="#blog">Coffee<span class="sr-only">(current)</span></a>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="#food">Food</a>
-                </li>
-
                 @if (Route::has('login'))
                     @auth
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ ('my_cart') }}">
-                            <i class="bi bi-cart"></i>
-                        </a>
-                    </li>
+                  <li class="nav-item">
+    <a class="nav-link position-relative" href="{{ url('my_cart') }}">
+        <i class="fa fa-shopping-cart" style="font-size: 1.5rem;"></i>
+        <span class="top-0 position-absolute start-100 translate-middle badge rounded-pill bg-danger">
+            {{ session('cart') ? count(session('cart', [])) : 0 }}
+            <span class="visually-hidden">items in cart</span>
+        </span>
+    </a>
+</li>
+            </li>
 
 
                         <form action="{{ route('logout') }}" method="POST">

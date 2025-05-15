@@ -103,7 +103,7 @@
             </table>
 
             @if ($transactions->hasPages())
-                <div class="d-flex justify-content-center mt-4">
+                <div class="mt-4 d-flex justify-content-center">
                     {{ $transactions->links() }}
                 </div>
             @endif

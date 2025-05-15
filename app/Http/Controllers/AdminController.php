@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Coffee;
+use App\Models\Order;
 use App\Models\Transaction;
 use App\Models\Food;
 use App\Models\Stock;
@@ -40,7 +41,7 @@ class AdminController extends Controller
         $coffee = Coffee::when($search, function($query) use ($search) {
             return $query->where('coffee_title', 'like', '%'.$search.'%');
         })->get();
-        
+
         return view('admin.show_coffee', compact('coffee', 'search'));
     }
 
@@ -85,7 +86,7 @@ class AdminController extends Controller
     {
         $coffee = Coffee::select('id', 'coffee_title', 'detail', 'price', 'image', 'availability')
         ->orderBy('coffee_title')->get();
-        
+
         return view('admin.availability_coffee', compact('coffee'));
     }
 
@@ -131,7 +132,7 @@ class AdminController extends Controller
         $food = Food::when($search, function($query) use ($search) {
             return $query->where('food_title', 'like', '%'.$search.'%');
         })->get();
-        
+
         return view('admin.view_food', compact('food', 'search'));
     }
 
@@ -210,7 +211,7 @@ class AdminController extends Controller
         $stocks = Stock::when($search, function($query) use ($search) {
             return $query->where('ingredient_name', 'like', '%'.$search.'%');
         })->get();
-        
+
         return view('admin.view_stock', compact('stocks', 'search'));
     }
 
@@ -296,7 +297,7 @@ class AdminController extends Controller
     public function stockUsageReport()
 {
     $usageData = StockHistory::with('stock')
-        ->selectRaw('stock_id, 
+        ->selectRaw('stock_id,
             SUM(CASE WHEN type = "in" THEN quantity ELSE 0 END) as total_in,
             SUM(CASE WHEN type = "out" THEN quantity ELSE 0 END) as total_out')
         ->groupBy('stock_id')
@@ -310,5 +311,61 @@ class AdminController extends Controller
 
     return view('admin.stock_usage_report', compact('usageData', 'labels', 'stockIn', 'stockOut', 'currentStock'));
 }
+
+    public function orders()
+    {
+        $orders = Order::all();
+        return view('admin.order', compact('orders'));
+    }
+
+
+    public function on_the_way($id)
+    {
+        $orders = Order::find($id);
+        $orders->delivery_status = 'On the Way';
+        $orders->save();
+        return redirect()->back();
+    }
+
+
+    public function delivered($id)
+    {
+        $orders = Order::find($id);
+        $orders->delivery_status = 'Delivered';
+        $orders->save();
+        return redirect()->back();
+    }
+
+    public function canceled($id)
+    {
+        $orders = Order::find($id);
+        $orders->delivery_status = 'Canceled';
+        $orders->save();
+        return redirect()->back();
+    }
+
+
+    public function sales()
+    {
+        // Group orders by month and calculate total sales
+        $monthlySales = Order::selectRaw('MONTH(created_at) as month, SUM(price) as total_sales')
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+
+        // Convert month numbers to month names
+        $labels = $monthlySales->pluck('month')->map(function ($month) {
+            return date('F', mktime(0, 0, 0, $month, 1)); // Convert month number to name
+        });
+
+        // Extract total sales data
+        $data = $monthlySales->pluck('total_sales');
+
+        // Pass the labels and data to the view
+        return view('admin.sales', compact('labels', 'data'));
+    }
+
+
+
 
 }

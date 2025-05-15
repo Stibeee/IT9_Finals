@@ -24,8 +24,8 @@
               </li>
 
               <li>
-                <a href="#foodDropdown" aria-expanded="false" data-toggle="collapse"> 
-                    <i class="icon-windows"></i> Food 
+                <a href="#foodDropdown" aria-expanded="false" data-toggle="collapse">
+                    <i class="icon-windows"></i> Food
                 </a>
                 <ul id="foodDropdown" class="collapse list-unstyled">
                     <li><a href="{{ route('admin.add_food') }}">Add Food</a></li>
@@ -36,8 +36,8 @@
             </li>
 
             <li>
-                <a href="#stockInDropdown" aria-expanded="false" data-toggle="collapse"> 
-                    <i class="icon-windows"></i> Stocks 
+                <a href="#stockInDropdown" aria-expanded="false" data-toggle="collapse">
+                    <i class="icon-windows"></i> Stocks
                 </a>
                 <ul id="stockInDropdown" class="collapse list-unstyled">
                     <li><a href="{{ route('admin.add_stock') }}">Add Stock</a></li>
@@ -49,8 +49,10 @@
 
       <ul class="list-unstyled">
         <li> <a href="{{('transactions') }}"> <i class="icon-list"></i>Transaction List</a></li>
-        <li> <a href="#"> <i class="icon-settings"></i>Orders</a></li>
-        <li> <a href="#"> <i class="icon-writing-whiteboard"></i>Sales</a></li>
+        <li> <a href="{{ url('orders') }}"> <i class="icon-settings"></i>Orders</a></li>
+
+
+        <li> <a href="{{ ('sales') }}"> <i class="icon-writing-whiteboard"></i>Sales</a></li>
 
       </ul>
     </nav>

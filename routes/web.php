@@ -42,7 +42,7 @@ Route::get('/transactions', [AdminController::class, 'transactionList'])->name('
 
 Route::post('/add_cart/{id}', [HomeController::class, 'add_cart'])->name('add_cart');
 
-route::get('/my_cart', [HomeController::class, 'my_cart']);
+Route::get('/my_cart', [HomeController::class, 'my_cart'])->name('my_cart');
 
 route::get('/remove_cart/{id}', [HomeController::class, 'remove_cart']);
 
@@ -61,6 +61,24 @@ Route::get('/update_stock/{id}', [AdminController::class, 'updateStock'])->name(
 Route::post('/edit_stock/{id}', [AdminController::class, 'editStock'])->name('admin.edit_stock');
 
 Route::get('/stock-usage-report', [AdminController::class, 'stockUsageReport'])->name('admin.stock_usage_report');
+
+route::post('/confirm_order', [HomeController::class, 'confirm_order']);
+
+route::get('/orders', [AdminController::class, 'orders']);
+
+route::get('on_the_way/{id}', [AdminController::class, 'on_the_way']);
+
+route::get('delivered/{id}', [AdminController::class, 'delivered']);
+
+route::get('canceled/{id}', [AdminController::class, 'canceled']);
+
+Route::get('/sales', [AdminController::class, 'sales']);
+
+
+
+
+
+
 
 Route::middleware([
     'auth:sanctum',
