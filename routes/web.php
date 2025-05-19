@@ -6,6 +6,8 @@ use App\Http\Controllers\HomeController;
 
 use App\Http\Controllers\AdminController;
 
+use App\Http\Controllers\PaymentController;
+
 
 route::get( '/', [HomeController::class, 'my_home']);
 
@@ -62,9 +64,9 @@ Route::post('/edit_stock/{id}', [AdminController::class, 'editStock'])->name('ad
 
 Route::get('/stock-usage-report', [AdminController::class, 'stockUsageReport'])->name('admin.stock_usage_report');
 
-route::post('/confirm_order', [HomeController::class, 'confirm_order']);
+Route::post('/confirm_order', [HomeController::class, 'confirm_order'])->name('confirm_order');
 
-route::get('/orders', [AdminController::class, 'orders']);
+Route::get('/orders', [AdminController::class, 'orders']);
 
 route::get('on_the_way/{id}', [AdminController::class, 'on_the_way']);
 
@@ -72,21 +74,22 @@ route::get('delivered/{id}', [AdminController::class, 'delivered']);
 
 route::get('canceled/{id}', [AdminController::class, 'canceled']);
 
-Route::get('/sales', [AdminController::class, 'sales']);
+Route::get('/sales', [AdminController::class, 'sales'])->name('admin.sales');
 
 Route::get('/my_orders', [HomeController::class, 'my_orders'])->name('my_orders');
 
-
-
-
-
+Route::middleware(['auth'])->group(function () {
+    Route::get('/payment', [PaymentController::class, 'showPaymentForm'])->name('payment.form');
+    Route::post('/payment/process', [PaymentController::class, 'processPayment'])->name('payment.process');
+    Route::get('/payment/history', [PaymentController::class, 'paymentHistory'])->name('payment.history');
+    Route::post('/payment/{payment}/refund', [PaymentController::class, 'refundPayment'])->name('payment.refund');
+    Route::get('/payment/success', [PaymentController::class, 'success'])->name('payment.success');
+});
 
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
 });

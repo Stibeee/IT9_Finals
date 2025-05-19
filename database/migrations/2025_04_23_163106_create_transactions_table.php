@@ -15,12 +15,12 @@ return new class extends Migration
         $table->id();
         $table->string('product_name');
         $table->integer('quantity');
-        $table->decimal('price', 8, 2);  // Example for price field
-        $table->integer('user_id');      // If you need to track who made the transaction
+            $table->decimal('price', 8, 2);
+            $table->decimal('total_price', 10, 2);
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
         $table->timestamps();
     });
 }
-
 
     /**
      * Reverse the migrations.

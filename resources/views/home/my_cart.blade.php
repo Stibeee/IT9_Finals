@@ -1,5 +1,3 @@
-
-<!DOCTYPE html>
 <html lang="en">
 <head>
     @include('home.css')
@@ -63,7 +61,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ ('/') }}">Home</a>
+                    <a class="nav-link" href="{{ url('/') }}">Home</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#about">About</a>
@@ -71,11 +69,12 @@
                 <li class="nav-item">
                     <a class="nav-link" href="#gallery">Gallery</a>
                 </li>
-            
-
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('my_orders') }}">My Orders</a>
+                </li>
             </ul>
-            <a class="m-auto navbar-brand" href="{{ ('/') }}">
-                <img src="assets/imgs/logo.svg" class="brand-img" alt="">
+            <a class="m-auto navbar-brand" href="{{ url('/') }}">
+                <img src="{{ asset('assets/imgs/logo.png') }}" class="brand-img" alt="">
                 <span class="brand-txt">Espreo Brew</span>
             </a>
             <ul class="navbar-nav">
@@ -145,7 +144,6 @@
         $total_price = 0;
         ?>
 
-
             @foreach ($cart_items as $item)
     <tr>
                 <td>{{ $item->coffee_title ?? $item->food_title }}</td>
@@ -170,8 +168,6 @@
     @endforeach
         </table>
 
-                    </div>
-
                     <div class="div_center">
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#orderModal">
                             View Order Details
@@ -193,7 +189,7 @@
 
                         <!-- Modal Body -->
                         <div class="modal-body">
-                            <form action="{{ ('confirm_order') }}" method="post">
+                        <form action="{{ route('confirm_order') }}" method="post">
                                     @csrf
 
                                     @foreach ($cart_items as $item)
@@ -207,25 +203,61 @@
                                     <!-- Customer info fields here -->
                                     <div class="form-group">
                                         <label for="name" class="text-dark fw-bold">Name:</label>
-                                        <input type="text" class="form-control" name="name" value="{{ Auth::user()->name }}">
+                                    <input type="text" class="form-control" name="name" value="{{ Auth::user()->name }}" required>
                                     </div>
                                     <div class="form-group">
                                         <label for="email" class="text-dark fw-bold">Email:</label>
-                                        <input type="email" class="form-control" name="email" value="{{ Auth::user()->email }}">
+                                    <input type="email" class="form-control" name="email" value="{{ Auth::user()->email }}" required>
                                     </div>
                                     <div class="form-group">
                                         <label for="phone" class="text-dark fw-bold">Phone:</label>
-                                        <input type="number" class="form-control" name="phone" value="{{ Auth::user()->phone }}">
+                                    <input type="number" class="form-control" name="phone" value="{{ Auth::user()->phone }}" required>
                                     </div>
                                     <div class="form-group">
                                         <label for="address" class="text-dark fw-bold">Address:</label>
-                                        <input type="text" class="form-control" name="address" value="{{ Auth::user()->address }}">
+                                    <input type="text" class="form-control" name="address" value="{{ Auth::user()->address }}" required>
+                                </div>
+
+                                <!-- Order Summary -->
+                                <div class="mt-4">
+                                    <h5 class="text-dark fw-bold">Order Summary</h5>
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Item</th>
+                                                    <th>Quantity</th>
+                                                    <th>Price</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($cart_items as $item)
+                                                <tr>
+                                                    <td>{{ $item->coffee_title ?? $item->food_title }}</td>
+                                                    <td>{{ $item->quantity }}</td>
+                                                    <td>₱{{ number_format($item->price, 2) }}</td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th colspan="2">Total:</th>
+                                                    <th>₱{{ number_format($total_price, 2) }}</th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
                                     </div>
-                                    <!-- ... rest of your form ... -->
+                                </div>
+
                                     <div class="mt-3 text-center form-group">
-                                        <input class="btn" type="submit" value="Order Now" style="background-color: #28a745; color: white;">
+                                    <input class="btn" type="submit" value="Proceed to Payment" style="background-color: #28a745; color: white;">
                                     </div>
                                 </form>
-                                @endif
                         </div>
-
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+</div>
+</body>

@@ -135,10 +135,57 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a href="{{ url()->previous() }}" class="btn btn-outline-light" style="margin: 50px 0 0 50px; border-radius: 5px; font-weight: 1000; font-size: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: background 0.2s;">
-                            <i class="fa fa-arrow-left"></i> Back
-                        </a>
+                    <a class="nav-link" href="{{ url('/') }}">Home</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#about">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#gallery">Gallery</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('my_orders') }}">My Orders</a>
+                </li>
+            </ul>
+            <a class="m-auto navbar-brand" href="{{ url('/') }}">
+                <img src="{{ asset('assets/imgs/logo.png') }}" class="brand-img" alt="">
+                <span class="brand-txt">Espreo Brew</span>
+            </a>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#blog">Coffee<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#food">Food<span class="sr-only">(current)</span></a>
+                </li>
+
+                @if (Route::has('login'))
+                    @auth
+                        <li class="nav-item">
+                            <a class="nav-link position-relative" href="{{ route('my_cart') }}">
+                                <i class="fa fa-shopping-cart" style="font-size: 1.5rem;"></i>
+                                <span class="top-0 position-absolute start-100 translate-middle badge rounded-pill bg-danger">
+                                    {{ $cart_items->sum('quantity') }}
+                                    <span class="visually-hidden"></span>
+                                </span>
+                            </a>
+                        </li>
+
+                        <form action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <input class="btn btn-primary ml-xl-4" type="submit" value="Logout">
+                        </form>
+                    @else
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('login') }}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('register') }}">Register</a>
+                        </li>
+                    @endauth
+                @endif
+            </ul>
+        </div>
     </nav>
      <br>
     <div id="gallery" class="text-center bg-dark text-light has-height-md middle-items wow fadeIn">
