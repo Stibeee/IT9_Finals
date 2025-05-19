@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Payment;
 
 class User extends Authenticatable
 {
@@ -28,7 +29,7 @@ class User extends Authenticatable
         'email',
         'password',
         'phone',
-        'Address',
+        'address',
     ];
 
     /**
@@ -71,5 +72,15 @@ class User extends Authenticatable
     public function coffees()
     {
         return $this->belongsToMany(Coffee::class, 'coffee_user');
+    }
+
+    /**
+     * Get the payments for the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
     }
 }

@@ -14,25 +14,42 @@ use App\Models\Food;
 
 use App\Models\Cart;
 
+use App\Models\Transaction;
+
 use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Support\Str;
 
+use Illuminate\Support\Facades\View;
+
 class HomeController extends Controller
 {
+    public function __construct()
+    {
+        // Share coffee data with all views that need it
+        View::composer([
+            'home.blog',
+            'home.index',
+            'dashboard',
+            'admin.availability_coffee',
+            'admin.show_coffee',
+            'admin.toggle_coffee',
+            'admin.update_coffee'
+        ], function ($view) {
+            $view->with('coffee', Coffee::all());
+        });
+    }
+
     public function my_home()
     {
-
         $coffee = Coffee::all();
         $food = Food::all();
         return view('home.index', compact('coffee', 'food'));
-
-
     }
+
     public function index()
     {
         if (Auth::id()) {
-
             $usertype = Auth::user()->usertype;
 
             if ($usertype == 'user') {
@@ -40,21 +57,14 @@ class HomeController extends Controller
                 $food = Food::all();
                 return view('home.index', compact('coffee', 'food'));
             } else {
-
-
-                $total_user= User::where('usertype', '=','user')->count();
-
-                $total_coffee= Coffee::count();
-
-
+                $total_user = User::where('usertype', '=', 'user')->count();
+                $total_coffee = Coffee::count();
                 return view('admin.index', compact('total_user', 'total_coffee'));
             }
-
         } else {
             return redirect()->route('login');
         }
     }
-
 
     public function add_cart(Request $request, $id, $type = 'coffee')
 {
@@ -107,7 +117,6 @@ class HomeController extends Controller
     }
 }
 
-
   public function my_cart()
 {
     $user_id = Auth::user()->id;
@@ -136,52 +145,46 @@ public function remove_cart($id)
     return redirect()->back()->with('error', 'Item not found in cart!');
 }
 
-
-
-
 public function confirm_order(Request $request) 
 { 
-    $request->validate([ 
-        'item_id' => 'required|array', 
-        'title' => 'required|array', 
-        'quantity' => 'required|array', 
-        'price' => 'required|array', 
-        'image' => 'required|array', 
-        'name' => 'required|string', 
-        'email' => 'required|email', 
-        'phone' => 'required|numeric', 
-        'address' => 'required|string', 
-    ]); 
-
     $user = Auth::user(); 
+        $cartItems = Cart::where('user_id', $user->id)->get();
+        $totalAmount = 0;
+        
+        // Create transactions for each cart item
+        foreach ($cartItems as $item) {
+            $unitPrice = $item->price / $item->quantity;
+            Transaction::create([
+                'product_name' => $item->coffee_title ?? $item->food_title,
+                'quantity' => $item->quantity,
+                'price' => $unitPrice,
+                'total_price' => $item->price,
+                'user_id' => $user->id
+            ]);
+            $totalAmount += $item->price;
+        }
+        
+        // Store cart items in session for payment
+        session(['cart_items' => $cartItems]);
+        session(['customer_info' => [
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'address' => $request->address
+        ]]);
 
-    foreach ($request->item_id as $index => $item_id) { 
-        $order = new Order; 
-        $order->user_id = $user->id; 
-        $order->name = $request->name; 
-        $order->email = $request->email; 
-        $order->phone = $request->phone; 
-        $order->address = $request->address; 
-        $order->title = $request->title[$index]; 
-        $order->quantity = $request->quantity[$index]; 
-        $order->price = $request->price[$index]; 
-        $order->image = $request->image[$index]; 
-        $order->delivery_status = 'pending'; 
+        // Store total amount in session
+        session(['order_total' => $totalAmount]);
 
-        $order->save(); 
-
-        // Remove the item from the cart 
-        Cart::where('id', $item_id)->delete(); 
-    } 
-
-    return redirect()->back()->with('message', 'Order placed successfully!'); 
+        // Redirect to payment page
+        return redirect()->route('payment.form');
 }
 
     public function my_orders()
     {
         $user = Auth::user();
         $orders = Order::where('user_id', $user->id)->get();
-        return view('home.my_orders', compact('orders'));
+        $cart_items = Cart::where('user_id', $user->id)->get();
+        return view('home.my_orders', compact('orders', 'cart_items'));
     }
-
 }

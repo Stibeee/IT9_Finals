@@ -1,115 +1,88 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     @include('admin.css')
-
-    <style>
-        body {
-            background-color: #000;
-            color: #fff;
-        }
-
-        .container {
-            margin-top: 50px;
-        }
-
-        .card {
-            background-color: #111;
-            border: 1px solid #444;
-            border-radius: 10px;
-            padding: 20px;
-        }
-
-        h2 {
-            text-align: center;
-            margin-bottom: 30px;
-            font-weight: bold;
-            color: #fff;
-        }
-
-        .table {
-            background-color: #000;
-            color: #fff;
-        }
-
-        .table thead th {
-            background-color: #222;
-            color: #fff;
-            border-bottom: 2px solid #555;
-        }
-
-        .table tbody tr:nth-child(even) {
-            background-color: #111;
-        }
-
-        .table tbody tr:hover {
-            background-color: #222;
-        }
-
-        .pagination .page-link {
-            background-color: #000;
-            border: 1px solid #444;
-            color: #fff;
-        }
-
-        .pagination .page-item.active .page-link {
-            background-color: #444;
-            border-color: #444;
-        }
-
-        .text-muted {
-            color: #aaa !important;
-        }
-    </style>
 </head>
 <body>
+    <div class="page">
     @include('admin.header')
+        <div class="page-content d-flex align-items-stretch">
     @include('admin.sidebar')
-
-    <div class="container">
+            <div class="content-inner">
+                <header class="page-header">
+                    <div class="container-fluid">
+                        <h2 class="no-margin-bottom">Transaction List</h2>
+                    </div>
+                </header>
+                <div class="breadcrumb-holder container-fluid">
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
+                        <li class="breadcrumb-item active">Transaction List</li>
+                    </ul>
+                </div>
+                <section class="tables">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-12">
         <div class="card">
-            <h2>Transaction List</h2>
-
-            <table class="table table-hover">
+                                    <div class="card-header d-flex align-items-center">
+                                        <h3 class="h4">Transaction History</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-hover">
             <thead>
     <tr>
-        <th>#</th>
-        <th>Product ID</th>
-        <th>Product Name</th> {{-- Added --}}
+                                                        <th>Product Name</th>
         <th>Quantity</th>
-        <th>Total Price</th>
-        <th>Date of Sale</th>
+                                                        <th>Price</th>
+                                                        <th>Total</th>
+                                                        <th>Customer</th>
+                                                        <th>Date</th>
     </tr>
-            </thead class="thead-dark">
+                                                </thead>
             <tbody>
                 @forelse($transactions as $transaction)
                     <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $transaction->product_id }}</td>
-                        <td>
-                            {{ $transaction->product_name ?? 'Unknown' }} {{-- Assumes product_name exists or is joined --}}
-                        </td>
+                                                            <td>{{ $transaction->product_name }}</td>
                         <td>{{ $transaction->quantity }}</td>
-                        <td>${{ number_format($transaction->total_price, 2) }}</td>
-                        <td class="text-muted">{{ $transaction->created_at->format('Y-m-d H:i') }}</td>
+                                                            <td>₱{{ number_format($transaction->price, 2) }}</td>
+                                                            <td>₱{{ number_format($transaction->total_price, 2) }}</td>
+                                                            <td>{{ $transaction->user->name }}</td>
+                                                            <td>{{ $transaction->created_at->format('M d, Y H:i:s') }}</td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="text-center text-muted">No transactions found.</td>
+                                                            <td colspan="6" class="text-center">No transactions found</td>
                     </tr>
                 @endforelse
             </tbody>
-
             </table>
-
-            @if ($transactions->hasPages())
-                <div class="mt-4 d-flex justify-content-center">
+                                        </div>
+                                        <div class="mt-4">
                     {{ $transactions->links() }}
                 </div>
-            @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <footer class="main-footer">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <p>ALT-CTRL-DELETE 2025</p>
+                            </div>
+                            <div class="col-sm-6 text-right">
+                                <p><a href="#" class="external">Espresso Brew</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            </div>
         </div>
     </div>
-
     @include('admin.js')
 </body>
 </html>

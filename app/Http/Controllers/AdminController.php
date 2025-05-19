@@ -78,7 +78,9 @@ class AdminController extends Controller
 
     public function transactionList()
     {
-        $transactions = Transaction::orderBy('created_at', 'desc')->paginate(10);
+        $transactions = Transaction::with('user')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
         return view('admin.transactions', compact('transactions'));
     }
 
@@ -347,22 +349,30 @@ class AdminController extends Controller
 
     public function sales()
     {
-        // Group orders by month and calculate total sales
-        $monthlySales = Order::selectRaw('MONTH(created_at) as month, SUM(price) as total_sales')
-            ->groupBy('month')
+        // Get monthly sales data
+        $monthlySales = Transaction::selectRaw('
+            MONTH(created_at) as month,
+            YEAR(created_at) as year,
+            SUM(total_price) as total_sales,
+            COUNT(*) as total_transactions
+        ')
+        ->groupBy('year', 'month')
+        ->orderBy('year')
             ->orderBy('month')
             ->get();
 
-        // Convert month numbers to month names
-        $labels = $monthlySales->pluck('month')->map(function ($month) {
-            return date('F', mktime(0, 0, 0, $month, 1)); // Convert month number to name
+        // Format data for the chart
+        $labels = $monthlySales->map(function ($sale) {
+            return date('F Y', mktime(0, 0, 0, $sale->month, 1, $sale->year));
         });
 
-        // Extract total sales data
         $data = $monthlySales->pluck('total_sales');
 
-        // Pass the labels and data to the view
-        return view('admin.sales', compact('labels', 'data'));
+        // Calculate total revenue and transactions
+        $totalRevenue = $monthlySales->sum('total_sales');
+        $totalTransactions = $monthlySales->sum('total_transactions');
+
+        return view('admin.sales', compact('labels', 'data', 'totalRevenue', 'totalTransactions'));
     }
 
 
